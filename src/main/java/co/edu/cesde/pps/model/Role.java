@@ -21,45 +21,9 @@ public class Role {
     private String name;
     private String description;
 
-    // Constructor vacío (requerido para JPA futuro)
-    public Role() {
-    }
-
     // Constructor con campos obligatorios
     public Role(String name) {
         this.name = name;
-    }
-
-    // Constructor completo (excepto ID autogenerado)
-    public Role(String name, String description) {
-        this.name = name;
-        this.description = description;
-    }
-
-    // Getters y Setters
-
-    public Long getRoleId() {
-        return roleId;
-    }
-
-    public void setRoleId(Long roleId) {
-        this.roleId = roleId;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     // equals y hashCode basados en ID
@@ -77,14 +41,4 @@ public class Role {
         return Objects.hash(roleId);
     }
 
-    // toString sin navegación a objetos relacionados
-
-    @Override
-    public String toString() {
-        return "Role{" +
-                "roleId=" + roleId +
-                ", name='" + name + '\'' +
-                ", description='" + description + '\'' +
-                '}';
-    }
 }

@@ -1,5 +1,7 @@
 package co.edu.cesde.pps.model;
 
+import lombok.*;
+
 import java.util.Objects;
 
 /**
@@ -14,35 +16,18 @@ import java.util.Objects;
  * Relaciones (futuro - etapa02):
  * - 1:N con Order (un estado puede aplicar a múltiples órdenes)
  */
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
 public class OrderStatus {
 
     private Long orderStatusId;
     private String name;
 
-    // Constructor vacío (requerido para JPA futuro)
-    public OrderStatus() {
-    }
-
     // Constructor con campos obligatorios
     public OrderStatus(String name) {
-        this.name = name;
-    }
-
-    // Getters y Setters
-
-    public Long getOrderStatusId() {
-        return orderStatusId;
-    }
-
-    public void setOrderStatusId(Long orderStatusId) {
-        this.orderStatusId = orderStatusId;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
         this.name = name;
     }
 
@@ -61,13 +46,4 @@ public class OrderStatus {
         return Objects.hash(orderStatusId);
     }
 
-    // toString sin navegación a objetos relacionados
-
-    @Override
-    public String toString() {
-        return "OrderStatus{" +
-                "orderStatusId=" + orderStatusId +
-                ", name='" + name + '\'' +
-                '}';
-    }
 }

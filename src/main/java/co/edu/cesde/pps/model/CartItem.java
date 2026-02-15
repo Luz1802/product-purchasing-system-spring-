@@ -2,6 +2,8 @@ package co.edu.cesde.pps.model;
 
 import co.edu.cesde.pps.util.CalculationUtils;
 import co.edu.cesde.pps.util.ValidationUtils;
+import lombok.*;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -32,6 +34,11 @@ import java.util.Objects;
  * - N:1 con Cart (muchos items pertenecen a un carrito)
  * - N:1 con Product (muchos items referencian a un producto)
  */
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@ToString
 public class CartItem {
 
     private Long cartItemId;
@@ -41,10 +48,6 @@ public class CartItem {
     private BigDecimal unitPrice;
     private LocalDateTime addedAt;
 
-    // Constructor vacío (requerido para JPA futuro)
-    public CartItem() {
-    }
-
     // Constructor con campos obligatorios
     public CartItem(Cart cart, Product product, Integer quantity, BigDecimal unitPrice) {
         this.cart = cart;
@@ -52,45 +55,6 @@ public class CartItem {
         this.quantity = quantity;
         this.unitPrice = unitPrice;
         this.addedAt = LocalDateTime.now();
-    }
-
-    // Constructor completo (excepto ID y timestamp autogenerado)
-    public CartItem(Cart cart, Product product, Integer quantity, BigDecimal unitPrice, LocalDateTime addedAt) {
-        this.cart = cart;
-        this.product = product;
-        this.quantity = quantity;
-        this.unitPrice = unitPrice;
-        this.addedAt = addedAt != null ? addedAt : LocalDateTime.now();
-    }
-
-    // Getters y Setters
-
-    public Long getCartItemId() {
-        return cartItemId;
-    }
-
-    public void setCartItemId(Long cartItemId) {
-        this.cartItemId = cartItemId;
-    }
-
-    public Cart getCart() {
-        return cart;
-    }
-
-    public void setCart(Cart cart) {
-        this.cart = cart;
-    }
-
-    public Product getProduct() {
-        return product;
-    }
-
-    public void setProduct(Product product) {
-        this.product = product;
-    }
-
-    public Integer getQuantity() {
-        return quantity;
     }
 
     public void setQuantity(Integer quantity) {
@@ -135,18 +99,4 @@ public class CartItem {
         return Objects.hash(cartItemId);
     }
 
-    // toString sin navegación a objetos relacionados (solo IDs)
-
-    @Override
-    public String toString() {
-        return "CartItem{" +
-                "cartItemId=" + cartItemId +
-                ", cartId=" + (cart != null ? cart.getCartId() : null) +
-                ", productId=" + (product != null ? product.getProductId() : null) +
-                ", quantity=" + quantity +
-                ", unitPrice=" + unitPrice +
-                ", subtotal=" + calculateSubtotal() +
-                ", addedAt=" + addedAt +
-                '}';
-    }
 }

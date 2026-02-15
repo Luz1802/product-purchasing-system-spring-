@@ -1,5 +1,7 @@
 package co.edu.cesde.pps.model;
 
+import lombok.*;
+
 import java.util.Objects;
 
 /**
@@ -14,14 +16,15 @@ import java.util.Objects;
  * Relaciones (futuro - etapa02):
  * - 1:N con Payment (un estado puede aplicar a múltiples pagos)
  */
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
 public class PaymentStatus {
 
     private Long paymentStatusId;
     private String name;
-
-    // Constructor vacío (requerido para JPA futuro)
-    public PaymentStatus() {
-    }
 
     // Constructor con campos obligatorios
     public PaymentStatus(String name) {
@@ -61,13 +64,4 @@ public class PaymentStatus {
         return Objects.hash(paymentStatusId);
     }
 
-    // toString sin navegación a objetos relacionados
-
-    @Override
-    public String toString() {
-        return "PaymentStatus{" +
-                "paymentStatusId=" + paymentStatusId +
-                ", name='" + name + '\'' +
-                '}';
-    }
 }

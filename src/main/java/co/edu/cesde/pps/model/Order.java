@@ -2,6 +2,8 @@ package co.edu.cesde.pps.model;
 
 import co.edu.cesde.pps.util.CalculationUtils;
 import co.edu.cesde.pps.util.ValidationUtils;
+import lombok.*;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -42,6 +44,11 @@ import java.util.Objects;
  * - 1:N con OrderItem (items de la orden)
  * - 1:N con Payment (pagos asociados, puede haber reintentos)
  */
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
 public class Order {
 
     private Long orderId;
@@ -59,11 +66,6 @@ public class Order {
     // Colección para relación 1:N con OrderItem
     private List<OrderItem> items;
 
-    // Constructor vacío (requerido para JPA futuro)
-    public Order() {
-        this.items = new ArrayList<>();
-    }
-
     // Constructor con campos obligatorios
     public Order(String orderNumber, Long userId, Long orderStatusId,
                  Long shippingAddressId, Long billingAddressId) {
@@ -78,73 +80,6 @@ public class Order {
         this.total = BigDecimal.ZERO;
         this.createdAt = LocalDateTime.now();
         this.items = new ArrayList<>();
-    }
-
-    // Constructor completo (excepto ID y timestamp autogenerado)
-    public Order(String orderNumber, Long userId, Long orderStatusId,
-                 Long shippingAddressId, Long billingAddressId,
-                 BigDecimal subtotal, BigDecimal tax, BigDecimal shippingCost, BigDecimal total) {
-        this.orderNumber = orderNumber;
-        this.userId = userId;
-        this.orderStatusId = orderStatusId;
-        this.shippingAddressId = shippingAddressId;
-        this.billingAddressId = billingAddressId;
-        this.subtotal = subtotal != null ? subtotal : BigDecimal.ZERO;
-        this.tax = tax != null ? tax : BigDecimal.ZERO;
-        this.shippingCost = shippingCost != null ? shippingCost : BigDecimal.ZERO;
-        this.total = total != null ? total : BigDecimal.ZERO;
-        this.createdAt = LocalDateTime.now();
-        this.items = new ArrayList<>();
-    }
-
-    // Getters y Setters
-
-    public Long getOrderId() {
-        return orderId;
-    }
-
-    public void setOrderId(Long orderId) {
-        this.orderId = orderId;
-    }
-
-    public String getOrderNumber() {
-        return orderNumber;
-    }
-
-    public void setOrderNumber(String orderNumber) {
-        this.orderNumber = orderNumber;
-    }
-
-    public Long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
-
-    public Long getOrderStatusId() {
-        return orderStatusId;
-    }
-
-    public void setOrderStatusId(Long orderStatusId) {
-        this.orderStatusId = orderStatusId;
-    }
-
-    public Long getShippingAddressId() {
-        return shippingAddressId;
-    }
-
-    public void setShippingAddressId(Long shippingAddressId) {
-        this.shippingAddressId = shippingAddressId;
-    }
-
-    public Long getBillingAddressId() {
-        return billingAddressId;
-    }
-
-    public void setBillingAddressId(Long billingAddressId) {
-        this.billingAddressId = billingAddressId;
     }
 
     public BigDecimal getSubtotal() {
@@ -219,22 +154,4 @@ public class Order {
         return Objects.hash(orderId);
     }
 
-    // toString sin navegación a objetos relacionados (solo IDs y tamaño de colección)
-
-    @Override
-    public String toString() {
-        return "Order{" +
-                "orderId=" + orderId +
-                ", orderNumber='" + orderNumber + '\'' +
-                ", userId=" + userId +
-                ", orderStatusId=" + orderStatusId +
-                ", shippingAddressId=" + shippingAddressId +
-                ", billingAddressId=" + billingAddressId +
-                ", subtotal=" + subtotal +
-                ", tax=" + tax +
-                ", shippingCost=" + shippingCost +
-                ", total=" + total +
-                ", createdAt=" + createdAt +
-                '}';
-    }
 }
