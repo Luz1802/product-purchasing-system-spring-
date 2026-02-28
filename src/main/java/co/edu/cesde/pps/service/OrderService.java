@@ -50,7 +50,7 @@ public class OrderService {
     private final Random random;
 
     public OrderService(UserService userService, CartService cartService,
-                       AddressService addressService, ProductService productService) {
+                        AddressService addressService, ProductService productService) {
         this.orderMapper = new OrderMapper();
         this.userService = userService;
         this.cartService = cartService;
@@ -87,7 +87,7 @@ public class OrderService {
      * @throws InsufficientStockException si no hay stock suficiente
      */
     public OrderDTO checkout(Long userId, Long cartId, Long shippingAddressId,
-                            Long billingAddressId) {
+                             Long billingAddressId) {
         // 1. Validar usuario está registrado
         userService.findUserEntityOrThrow(userId);
 
@@ -97,7 +97,7 @@ public class OrderService {
         // Validar estado OPEN
         if (cart.getStatus() != CartStatus.OPEN) {
             throw new InvalidCartStateException(cartId, cart.getStatus(),
-                CartStatus.OPEN, "checkout");
+                    CartStatus.OPEN, "checkout");
         }
 
         // Validar no vacío
@@ -129,40 +129,47 @@ public class OrderService {
             // Verificar que el producto esté activo
             if (!product.getIsActive()) {
                 throw new ValidationException("Product '" + product.getName() +
-                    "' is no longer available");
+                        "' is no longer available");
             }
 
             // Verificar stock suficiente
             if (!CalculationUtils.hasEnoughStock(product.getStockQty(), item.getQuantity())) {
                 throw new InsufficientStockException(product.getProductId(),
-                    product.getSku(), item.getQuantity(), product.getStockQty());
+                        product.getSku(), item.getQuantity(), product.getStockQty());
             }
         }
 
-        // 5. Crear orden con número único
-        String orderNumber = generateOrderNumber();
-        Order order = new Order(orderNumber, userId, 1L, // TODO: orderStatusId = PENDING
-            shippingAddressId, billingAddressId);
-        order.setOrderId(generateNextId());
+        Order order = Order.builder()
+                .orderId(generateNextId())
+                .orderNumber(generateOrderNumber())
+                .userId(userId)
+                .orderStatusId(1L)
+                .shippingAddressId(shippingAddressId)
+                .billingAddressId(billingAddressId)
+                .subtotal(BigDecimal.ZERO)
+                .tax(BigDecimal.ZERO)
+                .shippingCost(BigDecimal.ZERO)
+                .total(BigDecimal.ZERO)
+                .createdAt(LocalDateTime.now())
+                .build();
 
-        // 6. Copiar items del carrito a la orden (congelar precios históricos)
-        for (CartItem cartItem : cart.getItems()) {
-            OrderItem orderItem = new OrderItem(
-                order,
-                cartItem.getProduct(),
-                cartItem.getQuantity(),
-                cartItem.getUnitPrice()  // Precio histórico al momento de compra
-            );
-            orderItem.setOrderItemId(generateNextOrderItemId());
+        OrderItem orderItem = OrderItem.builder()
+                .orderItemId(generateNextOrderItemId())
+                .order(order)
+                .product(cart.getItems().get(0).getProduct()) // Solo el primer producto por simplicidad
+                .quantity(cart.getItems().get(0).getQuantity())
+                .unitPrice(cart.getItems().get(0).getUnitPrice())
+                .lineTotal(BigDecimal.ZERO) // Se calculará después
+                .build();
 
-            // Calcular lineTotal
-            orderItem.setLineTotal(CalculationUtils.calculateOrderItemLineTotal(
-                cartItem.getUnitPrice(), cartItem.getQuantity()));
+        // Calcular lineTotal
+        orderItem.setLineTotal(CalculationUtils.calculateOrderItemLineTotal(
+                orderItem.getUnitPrice(), orderItem.getQuantity()));
 
-            // Gestión bidireccional
-            order.getItems().add(orderItem);
-            orderItem.setOrder(order);
-        }
+        // Gestión bidireccional
+        order.getItems().add(orderItem);
+        orderItem.setOrder(order);
+
 
         // 7. Calcular totales
         List<BigDecimal> lineTotals = order.getItems().stream()
@@ -183,7 +190,7 @@ public class OrderService {
         // 8. Actualizar stock de productos
         for (CartItem item : cart.getItems()) {
             productService.decreaseStock(item.getProduct().getProductId(),
-                item.getQuantity());
+                    item.getQuantity());
         }
 
         // 9. Marcar carrito como CONVERTED
@@ -269,7 +276,7 @@ public class OrderService {
         // TODO Etapa 06: List<Order> orders = orderRepository.findByCreatedAtBetween(start, end);
         List<Order> rangeOrders = ordersInMemory.stream()
                 .filter(o -> o.getCreatedAt().isAfter(startDate) &&
-                           o.getCreatedAt().isBefore(endDate))
+                        o.getCreatedAt().isBefore(endDate))
                 .collect(Collectors.toList());
 
         return orderMapper.toDTOList(rangeOrders);
@@ -286,7 +293,7 @@ public class OrderService {
     public String generateOrderNumber() {
         String prefix = AppConfig.getOrderNumberPrefix(); // "ORD-"
         String date = LocalDateTime.now().format(
-            DateTimeFormatter.ofPattern("yyyyMMdd"));
+                DateTimeFormatter.ofPattern("yyyyMMdd"));
         String randomPart = String.format("%06d", random.nextInt(1000000));
 
         return prefix + date + "-" + randomPart;

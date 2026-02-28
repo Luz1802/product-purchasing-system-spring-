@@ -63,7 +63,7 @@ public class AddressService {
 
         if (currentCount >= AppConfig.getMaxAddressesPerUser()) {
             throw new ValidationException("User has reached maximum number of addresses (" +
-                AppConfig.getMaxAddressesPerUser() + ")");
+                    AppConfig.getMaxAddressesPerUser() + ")");
         }
 
         // Validar datos de dirección

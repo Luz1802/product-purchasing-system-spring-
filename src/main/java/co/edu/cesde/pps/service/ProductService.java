@@ -113,7 +113,7 @@ public class ProductService {
 
         // Actualizar categoría si cambió
         if (productDTO.getCategoryId() != null &&
-            !productDTO.getCategoryId().equals(product.getCategory().getCategoryId())) {
+                !productDTO.getCategoryId().equals(product.getCategory().getCategoryId())) {
             Category newCategory = categoryService.findCategoryEntityOrThrow(productDTO.getCategoryId());
             product.setCategory(newCategory);
         }
@@ -231,7 +231,7 @@ public class ProductService {
     public boolean checkAvailability(Long productId, Integer quantity) {
         Product product = findProductEntityOrThrow(productId);
         return product.getIsActive() &&
-               CalculationUtils.hasEnoughStock(product.getStockQty(), quantity);
+                CalculationUtils.hasEnoughStock(product.getStockQty(), quantity);
     }
 
     /**
@@ -274,7 +274,7 @@ public class ProductService {
 
         if (!CalculationUtils.hasEnoughStock(product.getStockQty(), quantity)) {
             throw new InsufficientStockException(productId, product.getSku(),
-                quantity, product.getStockQty());
+                    quantity, product.getStockQty());
         }
 
         int newStock = CalculationUtils.calculateNewStock(product.getStockQty(), quantity);

@@ -2,6 +2,7 @@ package co.edu.cesde.pps.model;
 
 import co.edu.cesde.pps.enums.CartStatus;
 import co.edu.cesde.pps.util.CalculationUtils;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -9,6 +10,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * Entidad Cart - Carrito de compras.
@@ -34,6 +36,8 @@ import java.util.Objects;
  * - N:1 con UserSession (muchos carritos pertenecen a una sesión)
  * - 1:N con CartItem (un carrito tiene muchos items)
  */
+@Entity
+@Table(name = "carts")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -41,23 +45,46 @@ import java.util.Objects;
 @Builder
 public class Cart {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "cart_id")
     private Long cartId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
     private User user; // Nullable - NULL para invitados
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "session_id", nullable = false)
     private UserSession session;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false, length = 20)
     @Builder.Default
     private CartStatus status = CartStatus.OPEN;
+
+    @Column(name = "created_at", nullable = false)
     @Builder.Default
     private LocalDateTime createdAt = LocalDateTime.now();
+
+    @Column(name = "updated_at", nullable = false)
     @Builder.Default
     private LocalDateTime updatedAt = LocalDateTime.now();
 
     // Colección para relación 1:N
+    @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<CartItem> items = new ArrayList<>();
 
     // Método helper para calcular total del carrito
     public BigDecimal calculateTotal() {
-        return CalculationUtils.calculateCartTotal(items);
+        if (items == null || items.isEmpty()) {
+            return BigDecimal.ZERO;
+        }
+        List<BigDecimal> subtotals = items.stream()
+                .map(CartItem::calculateSubtotal)
+                .collect(Collectors.toList());
+        return CalculationUtils.calculateCartTotal(subtotals);
     }
 
     // Método helper para verificar si el carrito está abierto

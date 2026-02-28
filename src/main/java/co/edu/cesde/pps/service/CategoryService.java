@@ -224,7 +224,7 @@ public class CategoryService {
         // TODO Etapa 06: List<Category> subs = categoryRepository.findByParentId(parentId);
         List<Category> subcategories = categoriesInMemory.stream()
                 .filter(c -> c.getParent() != null &&
-                           c.getParent().getCategoryId().equals(parentId))
+                        c.getParent().getCategoryId().equals(parentId))
                 .collect(Collectors.toList());
 
         return categoryMapper.toDTOList(subcategories);
@@ -284,7 +284,7 @@ public class CategoryService {
 
         // Validar que la subcategoría pertenezca al padre
         if (subcategory.getParent() == null ||
-            !subcategory.getParent().getCategoryId().equals(parentId)) {
+                !subcategory.getParent().getCategoryId().equals(parentId)) {
             throw new ValidationException("Category is not a subcategory of specified parent");
         }
 

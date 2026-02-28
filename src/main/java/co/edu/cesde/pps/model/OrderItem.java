@@ -2,6 +2,7 @@ package co.edu.cesde.pps.model;
 
 import co.edu.cesde.pps.util.CalculationUtils;
 import co.edu.cesde.pps.util.ValidationUtils;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -38,6 +39,10 @@ import java.util.Objects;
  * - N:1 con Order (muchos items pertenecen a una orden)
  * - N:1 con Product (muchos items referencian a un producto)
  */
+@Entity
+@Table(name = "order_items", uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"order_id", "product_id"})
+})
 @Getter
 @Setter
 @NoArgsConstructor
@@ -45,11 +50,26 @@ import java.util.Objects;
 @Builder
 public class OrderItem {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "order_item_id")
     private Long orderItemId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_id", nullable = false)
     private Order order;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "product_id", nullable = false)
     private Product product;
+
+    @Column(name = "quantity", nullable = false)
     private Integer quantity;
+
+    @Column(name = "unit_price", nullable = false, precision = 10, scale = 2)
     private BigDecimal unitPrice;
+
+    @Column(name = "line_total", nullable = false, precision = 10, scale = 2)
     private BigDecimal lineTotal;
 
     // Setters personalizados con validación (override de Lombok)

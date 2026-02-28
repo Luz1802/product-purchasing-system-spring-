@@ -1,5 +1,6 @@
 package co.edu.cesde.pps.model;
 
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -25,6 +26,8 @@ import java.util.Objects;
  * - N:1 con User (opcional, nullable - muchas sesiones pueden pertenecer a un usuario)
  * - 1:N con Cart (una sesión puede tener múltiples carritos en el tiempo)
  */
+@Entity
+@Table(name = "user_sessions")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -32,11 +35,23 @@ import java.util.Objects;
 @Builder
 public class UserSession {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "session_id")
     private Long sessionId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
     private User user; // Nullable - NULL para invitados
+
+    @Column(name = "session_token", nullable = false, unique = true, length = 255)
     private String sessionToken;
+
+    @Column(name = "created_at", nullable = false)
     @Builder.Default
     private LocalDateTime createdAt = LocalDateTime.now();
+
+    @Column(name = "expires_at", nullable = false)
     private LocalDateTime expiresAt;
 
     // Método helper para verificar si es sesión de invitado
