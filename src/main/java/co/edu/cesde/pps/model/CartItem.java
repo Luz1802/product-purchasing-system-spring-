@@ -1,5 +1,6 @@
 package co.edu.cesde.pps.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import co.edu.cesde.pps.util.CalculationUtils;
 import co.edu.cesde.pps.util.ValidationUtils;
 import jakarta.persistence.*;
@@ -53,6 +54,7 @@ public class CartItem {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cart_id", nullable = false)
+    @JsonBackReference("cart-items")
     private Cart cart;
 
     @ManyToOne(fetch = FetchType.EAGER)

@@ -1,6 +1,7 @@
 package co.edu.cesde.pps.model;
 
 import co.edu.cesde.pps.enums.UserStatus;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -81,6 +82,7 @@ public class User {
 
     // Colecciones para relaciones 1:N
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference("user-addresses")
     @Builder.Default
     private List<Address> addresses = new ArrayList<>();
 

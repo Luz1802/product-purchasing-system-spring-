@@ -1,5 +1,6 @@
 package co.edu.cesde.pps.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import co.edu.cesde.pps.util.CalculationUtils;
 import co.edu.cesde.pps.util.ValidationUtils;
 import jakarta.persistence.*;
@@ -57,6 +58,7 @@ public class OrderItem {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id", nullable = false)
+    @JsonBackReference("order-items")
     private Order order;
 
     @ManyToOne(fetch = FetchType.EAGER)

@@ -2,6 +2,7 @@ package co.edu.cesde.pps.model;
 
 import co.edu.cesde.pps.enums.CartStatus;
 import co.edu.cesde.pps.util.CalculationUtils;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -73,6 +74,7 @@ public class Cart {
 
     // Colección para relación 1:N
     @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference("cart-items")
     @Builder.Default
     private List<CartItem> items = new ArrayList<>();
 

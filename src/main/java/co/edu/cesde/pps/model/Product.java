@@ -1,5 +1,6 @@
 package co.edu.cesde.pps.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import co.edu.cesde.pps.util.ValidationUtils;
 import jakarta.persistence.*;
 import lombok.*;
@@ -48,6 +49,7 @@ public class Product {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "category_id", nullable = false)
+    @JsonBackReference("category-products")
     private Category category;
 
     @Column(name = "sku", nullable = false, unique = true, length = 50)
