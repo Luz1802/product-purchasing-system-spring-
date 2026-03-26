@@ -13,9 +13,15 @@ import java.util.Objects;
  * Campos:
  * - paymentMethodId: Identificador único del método (PK)
  * - name: Nombre único del método (UNIQUE)
+ * - description: Descripción del método (NULLABLE)
  *
- * Relaciones (futuro - etapa02):
+ * Tabla BD: payment_methods
+ *
+ * Relaciones (futuro - etapa09):
  * - 1:N con Payment (un método puede usarse en múltiples pagos)
+ *
+ * Refactorizado con Lombok en Etapa 07.
+ * Anotaciones JPA básicas agregadas en Etapa 08.
  */
 @Entity
 @Table(name = "payment_methods")
@@ -33,6 +39,9 @@ public class PaymentMethod {
 
     @Column(name = "name", nullable = false, unique = true, length = 50)
     private String name;
+
+    @Column(name = "description", length = 255)
+    private String description;
 
     // equals y hashCode basados en ID
 
@@ -56,6 +65,7 @@ public class PaymentMethod {
         return "PaymentMethod{" +
                 "paymentMethodId=" + paymentMethodId +
                 ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
                 '}';
     }
 }

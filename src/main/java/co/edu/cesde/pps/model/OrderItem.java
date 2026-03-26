@@ -22,6 +22,8 @@ import java.util.Objects;
  * - unitPrice: Precio unitario al momento de la compra (histórico)
  * - lineTotal: Total de la línea (unitPrice * quantity)
  *
+ * Tabla BD: order_items
+ *
  * Restricción UNIQUE (order, product):
  * Un producto no puede aparecer duplicado en la misma orden. Si el usuario
  * compra el mismo producto dos veces en checkout, debe consolidarse en un
@@ -36,14 +38,18 @@ import java.util.Objects;
  * Se puede calcular (unitPrice * quantity) o guardar para optimización.
  * Guardarlo facilita consultas y reportes sin recalcular.
  *
- * Relaciones:
+ * Relaciones (futuro - etapa09):
  * - N:1 con Order (muchos items pertenecen a una orden)
  * - N:1 con Product (muchos items referencian a un producto)
+ *
+ * Refactorizado con Lombok en Etapa 07.
+ * Anotaciones JPA básicas agregadas en Etapa 08.
  */
 @Entity
-@Table(name = "order_items", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"order_id", "product_id"})
-})
+@Table(name = "order_items",
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = {"order_id", "product_id"})
+        })
 @Getter
 @Setter
 @NoArgsConstructor
@@ -61,7 +67,7 @@ public class OrderItem {
     @JsonBackReference("order-items")
     private Order order;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 

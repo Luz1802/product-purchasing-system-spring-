@@ -13,14 +13,18 @@ import java.util.Objects;
  * Campos:
  * - orderStatusId: Identificador único del estado (PK)
  * - name: Nombre único del estado (UNIQUE)
+ * - description: Descripción del estado (NULLABLE)
  *
- * Relaciones (futuro - etapa02):
+ * Tabla BD: order_statuses
+ *
+ * Relaciones (futuro - etapa09):
  * - 1:N con Order (un estado puede aplicar a múltiples órdenes)
  *
- * Refactorizado con Lombok en Etapa 07 para eliminar boilerplate.
+ * Refactorizado con Lombok en Etapa 07.
+ * Anotaciones JPA básicas agregadas en Etapa 08.
  */
 @Entity
-@Table (name = "order_statuses")
+@Table(name = "order_statuses")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -30,13 +34,13 @@ public class OrderStatus {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column (name = "order_status_id")
+    @Column(name = "order_status_id")
     private Long orderStatusId;
 
-    @Column (name = "name", nullable = false, unique = true, length = 50)
+    @Column(name = "name", nullable = false, unique = true, length = 50)
     private String name;
 
-    @Column (name = "description", length = 255)
+    @Column(name = "description", length = 255)
     private String description;
 
     // equals y hashCode basados en ID

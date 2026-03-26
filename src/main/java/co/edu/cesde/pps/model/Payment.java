@@ -24,6 +24,8 @@ import java.util.Objects;
  * - providerReference: Referencia del proveedor de pagos (ej: ID de transacción de pasarela)
  * - paidAt: Fecha/hora en que se completó el pago exitosamente
  *
+ * Tabla BD: payments
+ *
  * Consideraciones de diseño:
  * - Múltiples pagos por orden permiten manejar:
  *   * Reintentos de pago fallido
@@ -34,10 +36,13 @@ import java.util.Objects;
  * - Currency enum permite soportar múltiples monedas
  * - BigDecimal en amount para precisión monetaria
  *
- * Relaciones:
+ * Relaciones (futuro - etapa09):
  * - N:1 con Order (muchos pagos pertenecen a una orden)
  * - N:1 con PaymentMethod (muchos pagos usan un método)
  * - N:1 con PaymentStatus (muchos pagos tienen un estado)
+ *
+ * Refactorizado con Lombok en Etapa 07.
+ * Anotaciones JPA básicas agregadas en Etapa 08.
  */
 @Entity
 @Table(name = "payments")
@@ -57,11 +62,11 @@ public class Payment {
     @JoinColumn(name = "order_id", nullable = false)
     private Order order;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "payment_method_id", nullable = false)
     private PaymentMethod paymentMethod;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "payment_status_id", nullable = false)
     private PaymentStatus paymentStatus;
 
@@ -69,7 +74,7 @@ public class Payment {
     private BigDecimal amount;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "currency", nullable = false, length = 3)
+    @Column(name = "currency", nullable = false)
     private Currency currency;
 
     @Column(name = "provider_reference", length = 255)

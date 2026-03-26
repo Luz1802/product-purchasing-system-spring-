@@ -31,6 +31,8 @@ import java.util.Objects;
  * - total: Total final de la orden (subtotal + tax + shippingCost)
  * - createdAt: Fecha de creación de la orden
  *
+ * Tabla BD: orders
+ *
  * Consideraciones de diseño:
  * - userId es obligatorio: los invitados deben registrarse antes del checkout
  * - Se guardan totales (subtotal, tax, shippingCost, total) para auditoría
@@ -38,13 +40,16 @@ import java.util.Objects;
  * - Direcciones de envío y facturación pueden ser diferentes
  * - BigDecimal en todos los campos monetarios para precisión
  *
- * Relaciones (futuro - etapa02):
+ * Relaciones (futuro - etapa09):
  * - N:1 con User (una orden pertenece a un usuario)
  * - N:1 con OrderStatus (estado actual)
  * - N:1 con Address (shipping_address_id)
  * - N:1 con Address (billing_address_id)
  * - 1:N con OrderItem (items de la orden)
  * - 1:N con Payment (pagos asociados, puede haber reintentos)
+ *
+ * Refactorizado con Lombok en Etapa 07.
+ * Anotaciones JPA básicas agregadas en Etapa 08.
  */
 @Entity
 @Table(name = "orders")
@@ -63,17 +68,21 @@ public class Order {
     @Column(name = "order_number", nullable = false, unique = true, length = 50)
     private String orderNumber;
 
-    @Column(name = "user_id", nullable = false)
-    private Long userId; // NOT NULL - checkout requiere usuario registrado
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user; // NOT NULL - checkout requiere usuario registrado
 
-    @Column(name = "order_status_id", nullable = false)
-    private Long orderStatusId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_status_id", nullable = false)
+    private OrderStatus orderStatus;
 
-    @Column(name = "shipping_address_id", nullable = false)
-    private Long shippingAddressId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "shipping_address_id", nullable = false)
+    private Address shippingAddress;
 
-    @Column(name = "billing_address_id", nullable = false)
-    private Long billingAddressId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "billing_address_id", nullable = false)
+    private Address billingAddress;
 
     @Column(name = "subtotal", nullable = false, precision = 10, scale = 2)
     @Builder.Default
@@ -91,12 +100,11 @@ public class Order {
     @Builder.Default
     private BigDecimal total = BigDecimal.ZERO;
 
-    @Column(name = "created_at", nullable = false)
+    @Column(name = "created_at", nullable = false, updatable = false)
     @Builder.Default
     private LocalDateTime createdAt = LocalDateTime.now();
 
-    // Colección para relación 1:N con OrderItem
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "order", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference("order-items")
     @Builder.Default
     private List<OrderItem> items = new ArrayList<>();
@@ -150,10 +158,10 @@ public class Order {
         return "Order{" +
                 "orderId=" + orderId +
                 ", orderNumber='" + orderNumber + '\'' +
-                ", userId=" + userId +
-                ", orderStatusId=" + orderStatusId +
-                ", shippingAddressId=" + shippingAddressId +
-                ", billingAddressId=" + billingAddressId +
+                ", user=" + (user != null ? user.getUserId() : null) +
+                ", orderStatus=" + (orderStatus != null ? orderStatus.getOrderStatusId() : null) +
+                ", shippingAddress=" + (shippingAddress != null ? shippingAddress.getAddressId() : null) +
+                ", billingAddress=" + (billingAddress != null ? billingAddress.getAddressId() : null) +
                 ", subtotal=" + subtotal +
                 ", tax=" + tax +
                 ", shippingCost=" + shippingCost +

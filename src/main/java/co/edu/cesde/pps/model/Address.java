@@ -1,32 +1,38 @@
 package co.edu.cesde.pps.model;
 
-import co.edu.cesde.pps.enums.AddressType;
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import co.edu.cesde.pps.enums.AddressType;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.Objects;
 
 /**
- * Entidad Address - Direcciones del usuario (envío y facturación).
+ * Entidad Address - Representa direcciones de envío y/o facturación de un usuario.
  *
- * Almacena direcciones físicas para propósitos de entrega y facturación.
+ * Un usuario puede tener múltiples direcciones (ej.: casa, oficina).
+ * Cada dirección tiene un tipo: SHIPPING (envío) o BILLING (facturación).
  *
  * Campos:
  * - addressId: Identificador único de la dirección (PK)
- * - user: Usuario propietario (N:1 con User)
+ * - user: Usuario propietario de la dirección (N:1 con User)
  * - type: Tipo de dirección (SHIPPING o BILLING)
- * - line1: Línea 1 de dirección (calle principal)
- * - line2: Línea 2 de dirección (apartamento, oficina - NULLABLE)
+ * - line1: Línea 1 de dirección (calle, número)
+ * - line2: Línea 2 de dirección (apartamento, piso) - opcional
  * - city: Ciudad
- * - state: Estado/departamento
+ * - state: Estado/Departamento/Provincia
  * - country: País
  * - postalCode: Código postal
  * - isDefault: Indica si es la dirección por defecto del usuario
  *
- * Relaciones:
+ * Tabla BD: addresses
+ *
+ * Relaciones (futuro - etapa09):
  * - N:1 con User (muchas direcciones pertenecen a un usuario)
+ * - 1:N con Order (como shipping_address_id o billing_address_id)
+ *
+ * Refactorizado con Lombok en Etapa 07.
+ * Anotaciones JPA básicas agregadas en Etapa 08.
  */
 @Entity
 @Table(name = "addresses")
@@ -48,7 +54,7 @@ public class Address {
     private User user;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "type", nullable = false, length = 20)
+    @Column(name = "type", nullable = false)
     private AddressType type;
 
     @Column(name = "line1", nullable = false, length = 255)

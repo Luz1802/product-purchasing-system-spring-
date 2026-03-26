@@ -18,13 +18,18 @@ import java.util.Objects;
  * - createdAt: Fecha de creación de la sesión
  * - expiresAt: Fecha de expiración de la sesión
  *
+ * Tabla BD: user_sessions
+ *
  * Comportamiento:
  * - user = NULL → sesión de invitado (guest)
  * - user = <User> → sesión de usuario registrado
  *
- * Relaciones:
+ * Relaciones (futuro - etapa09):
  * - N:1 con User (opcional, nullable - muchas sesiones pueden pertenecer a un usuario)
  * - 1:N con Cart (una sesión puede tener múltiples carritos en el tiempo)
+ *
+ * Refactorizado con Lombok en Etapa 07.
+ * Anotaciones JPA básicas agregadas en Etapa 08.
  */
 @Entity
 @Table(name = "user_sessions")
@@ -47,7 +52,7 @@ public class UserSession {
     @Column(name = "session_token", nullable = false, unique = true, length = 255)
     private String sessionToken;
 
-    @Column(name = "created_at", nullable = false)
+    @Column(name = "created_at", nullable = false, updatable = false)
     @Builder.Default
     private LocalDateTime createdAt = LocalDateTime.now();
 

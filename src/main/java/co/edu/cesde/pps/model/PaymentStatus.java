@@ -13,9 +13,15 @@ import java.util.Objects;
  * Campos:
  * - paymentStatusId: Identificador único del estado (PK)
  * - name: Nombre único del estado (UNIQUE)
+ * - description: Descripción del estado (NULLABLE)
  *
- * Relaciones (futuro - etapa02):
+ * Tabla BD: payment_statuses
+ *
+ * Relaciones (futuro - etapa09):
  * - 1:N con Payment (un estado puede aplicar a múltiples pagos)
+ *
+ * Refactorizado con Lombok en Etapa 07.
+ * Anotaciones JPA básicas agregadas en Etapa 08.
  */
 @Entity
 @Table(name = "payment_statuses")
@@ -33,6 +39,7 @@ public class PaymentStatus {
 
     @Column(name = "name", nullable = false, unique = true, length = 50)
     private String name;
+
     @Column(name = "description", length = 255)
     private String description;
 
@@ -58,6 +65,7 @@ public class PaymentStatus {
         return "PaymentStatus{" +
                 "paymentStatusId=" + paymentStatusId +
                 ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
                 '}';
     }
 }

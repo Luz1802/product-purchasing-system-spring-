@@ -23,13 +23,18 @@ import java.util.Objects;
  * - subcategories: Lista de subcategorías (1:N con Category)
  * - products: Lista de productos de esta categoría (1:N con Product)
  *
- * Relaciones:
+ * Tabla BD: categories
+ *
+ * Relaciones (futuro - etapa09):
  * - N:1 con Category (auto-referencia para jerarquía - muchas categorías tienen un padre)
  * - 1:N con Category (una categoría tiene muchas subcategorías)
  * - 1:N con Product (una categoría tiene muchos productos)
  *
  * NOTA: Los métodos de gestión bidireccional (addSubcategory, removeSubcategory) fueron movidos
  * a la capa de servicio (CategoryService) en etapa 05 para mantener el modelo limpio.
+ *
+ * Refactorizado con Lombok en Etapa 07.
+ * Anotaciones JPA básicas agregadas en Etapa 08.
  */
 @Entity
 @Table(name = "categories")
@@ -47,7 +52,7 @@ public class Category {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")
-    @JsonBackReference("category-subcategories")
+    @JsonBackReference("category-parent")
     private Category parent; // Nullable - NULL para categorías raíz
 
     @Column(name = "name", nullable = false, length = 100)
@@ -56,14 +61,12 @@ public class Category {
     @Column(name = "slug", nullable = false, unique = true, length = 100)
     private String slug;
 
-    // Colecciones para relaciones 1:N
-    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference("category-subcategories")
+    @OneToMany(mappedBy = "parent", fetch = FetchType.LAZY)
+    @JsonManagedReference("category-parent")
     @Builder.Default
     private List<Category> subcategories = new ArrayList<>();
 
-    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference("category-products")
+    @OneToMany(mappedBy = "category", fetch = FetchType.LAZY)
     @Builder.Default
     private List<Product> products = new ArrayList<>();
 

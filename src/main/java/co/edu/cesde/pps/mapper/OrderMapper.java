@@ -35,16 +35,20 @@ public class OrderMapper {
         OrderDTO dto = new OrderDTO();
         dto.setOrderId(order.getOrderId());
         dto.setOrderNumber(order.getOrderNumber());
-        dto.setUserId(order.getUserId());
 
-        // TODO: En etapa 06 con JPA, cargar user para obtener email y fullName
-        // Por ahora solo tenemos userId
+        if (order.getUser() != null) {
+            dto.setUserId(order.getUser().getUserId());
+            dto.setUserEmail(order.getUser().getEmail());
+            dto.setUserFullName(order.getUser().getFullName());
+        }
 
-        // TODO: En etapa 06 con JPA, cargar orderStatus para obtener nombre
-        // Por ahora solo tenemos orderStatusId
+        if (order.getOrderStatus() != null) {
+            dto.setOrderStatusName(order.getOrderStatus().getName());
+        }
 
-        // TODO: En etapa 06 con JPA, cargar addresses completas
-        // Por ahora solo tenemos addressIds
+        // shippingAddress / billingAddress: se mantienen como AddressDTO en el DTO.
+        // En esta etapa, este mapper no hace la conversión completa de Address -> AddressDTO.
+        // (Se suele resolver en el servicio con AddressMapper o endpoints dedicados.)
 
         dto.setCreatedAt(order.getCreatedAt());
 
@@ -138,8 +142,7 @@ public class OrderMapper {
         Order order = new Order();
         order.setOrderId(dto.getOrderId());
         order.setOrderNumber(dto.getOrderNumber());
-        order.setUserId(dto.getUserId());
-        // orderStatusId, shippingAddressId, billingAddressId se asignan en servicio
+        // Relaciones (user/orderStatus/addresses) se asignan en el servicio
         order.setSubtotal(dto.getSubtotal());
         order.setTax(dto.getTax());
         order.setShippingCost(dto.getShippingCost());

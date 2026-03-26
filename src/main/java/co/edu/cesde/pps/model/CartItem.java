@@ -23,6 +23,8 @@ import java.util.Objects;
  * - unitPrice: Precio unitario congelado al agregar (BigDecimal para precisión)
  * - addedAt: Fecha en que se agregó el item al carrito
  *
+ * Tabla BD: cart_items
+ *
  * Restricción UNIQUE (cart, product):
  * Un producto no puede aparecer duplicado en el mismo carrito. Si se agrega
  * el mismo producto dos veces, se debe actualizar la cantidad del item existente.
@@ -32,14 +34,18 @@ import java.util.Objects;
  * Esto asegura consistencia si el precio del producto cambia mientras el
  * usuario navega. El precio se "congela" al agregar al carrito.
  *
- * Relaciones:
+ * Relaciones (futuro - etapa09):
  * - N:1 con Cart (muchos items pertenecen a un carrito)
  * - N:1 con Product (muchos items referencian a un producto)
+ *
+ * Refactorizado con Lombok en Etapa 07.
+ * Anotaciones JPA básicas agregadas en Etapa 08.
  */
 @Entity
-@Table(name = "cart_items", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"cart_id", "product_id"})
-})
+@Table(name = "cart_items",
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = {"cart_id", "product_id"})
+        })
 @Getter
 @Setter
 @NoArgsConstructor
@@ -57,7 +63,7 @@ public class CartItem {
     @JsonBackReference("cart-items")
     private Cart cart;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
@@ -67,7 +73,7 @@ public class CartItem {
     @Column(name = "unit_price", nullable = false, precision = 10, scale = 2)
     private BigDecimal unitPrice;
 
-    @Column(name = "added_at", nullable = false)
+    @Column(name = "added_at", nullable = false, updatable = false)
     private LocalDateTime addedAt;
 
     // Setters personalizados con validación (override de Lombok)
@@ -81,6 +87,7 @@ public class CartItem {
         ValidationUtils.validateNonNegative(unitPrice, "unitPrice");
         this.unitPrice = unitPrice;
     }
+
 
     // Método helper para calcular subtotal del item
     public BigDecimal calculateSubtotal() {
@@ -102,7 +109,7 @@ public class CartItem {
         return Objects.hash(cartItemId);
     }
 
-    // toString personalizado sin navegación a objetos relacionados (solo IDs)
+    // toString sin navegación a objetos relacionados (solo IDs)
 
     @Override
     public String toString() {

@@ -15,8 +15,13 @@ import java.util.Objects;
  * - name: Nombre único del rol (UNIQUE)
  * - description: Descripción del rol y sus permisos
  *
- * Relaciones (futuro - etapa02):
+ * Tabla BD: roles
+ *
+ * Relaciones (futuro - etapa09):
  * - 1:N con User (un rol puede tener múltiples usuarios)
+ *
+ * Refactorizado con Lombok en Etapa 07.
+ * Anotaciones JPA básicas agregadas en Etapa 08.
  */
 @Entity
 @Table(name = "roles")

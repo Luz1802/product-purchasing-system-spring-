@@ -1,8 +1,8 @@
 package co.edu.cesde.pps.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import co.edu.cesde.pps.enums.CartStatus;
 import co.edu.cesde.pps.util.CalculationUtils;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -14,28 +14,68 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
- * Entidad Cart - Carrito de compras.
+ * Entidad Cart - Contenedor del carrito de compras.
  *
- * Maneja carritos tanto de usuarios registrados como de invitados (guests).
+ * El carrito puede pertenecer a un usuario registrado o a un invitado (guest).
+ * Siempre está asociado a una sesión mediante session.
  *
  * Campos:
  * - cartId: Identificador único del carrito (PK)
- * - user: Usuario dueño del carrito (N:1 con User) - NULLABLE para invitados
- * - session: Sesión asociada al carrito (N:1 con UserSession)
- * - status: Estado del carrito (OPEN, ABANDONED, CONVERTED)
+ * - user: Usuario propietario (N:1 con User) - NULLABLE para carritos de invitado
+ * - session: Sesión asociada (N:1 con UserSession) - siempre requerido
+ * - status: Estado del carrito (OPEN, CONVERTED, ABANDONED)
  * - createdAt: Fecha de creación del carrito
  * - updatedAt: Fecha de última actualización
  * - items: Lista de items del carrito (1:N con CartItem)
  *
- * Estados del carrito:
- * - OPEN: Carrito activo en uso
- * - ABANDONED: Carrito abandonado (inactivo > X días)
- * - CONVERTED: Carrito convertido a orden (checkout completado)
+ * Tabla BD: carts
  *
- * Relaciones:
- * - N:1 con User (opcional - muchos carritos pueden pertenecer a un usuario)
- * - N:1 con UserSession (muchos carritos pertenecen a una sesión)
+ * Comportamiento por tipo de usuario:
+ * - Invitado: user = NULL, session = <UserSession>
+ * - Registrado: user = <User>, session = <UserSession>
+ *
+ * Estados del carrito:
+ * - OPEN: Carrito activo, usuario puede agregar/quitar items
+ * - CONVERTED: Carrito convertido en orden (checkout completado)
+ * - ABANDONED: Carrito abandonado o resultado de merge
+ *
+ * POLÍTICA DE CART MERGE (OBLIGATORIA):
+ * =====================================
+ * Cuando un usuario invitado se registra o inicia sesión y ya existe un carrito
+ * abierto del usuario, se debe ejecutar el siguiente proceso de fusión (merge):
+ *
+ * Escenario:
+ * - Carrito A: carrito del invitado (user = NULL, status = OPEN)
+ * - Carrito B: carrito del usuario registrado (user = User, status = OPEN)
+ *
+ * Proceso de Merge (implementar en capa de servicio - etapa 05):
+ * 1. Identificar ambos carritos por session y user
+ * 2. Para cada CartItem del carrito invitado (A):
+ *    a. Si el mismo product existe en carrito usuario (B):
+ *       - Sumar las cantidades (quantity)
+ *       - Resolver conflicto de unitPrice (conservar más reciente o del usuario según política)
+ *    b. Si el product NO existe en carrito usuario (B):
+ *       - Mover/copiar el CartItem al carrito del usuario (B)
+ * 3. Marcar carrito invitado (A) como status = ABANDONED
+ * 4. Usuario continúa con carrito único (B) sin pérdida de productos
+ *
+ * Resultado:
+ * - El usuario mantiene un solo carrito activo
+ * - No se pierden productos agregados como invitado
+ * - No hay duplicación innecesaria de items
+ *
+ * Ver documentación completa en: documents_external/er_model_documentation.md - Sección 5
+ *
+ * Relaciones (futuro - etapa09):
+ * - N:1 con User (opcional, nullable para invitados)
+ * - N:1 con UserSession (obligatorio)
  * - 1:N con CartItem (un carrito tiene muchos items)
+ *
+ * NOTA: Los métodos de gestión bidireccional (addItem, removeItem) fueron movidos
+ * a la capa de servicio (CartService) en etapa 05 para mantener el modelo limpio.
+ *
+ * Refactorizado con Lombok en Etapa 07.
+ * Anotaciones JPA básicas agregadas en Etapa 08.
  */
 @Entity
 @Table(name = "carts")
@@ -56,15 +96,15 @@ public class Cart {
     private User user; // Nullable - NULL para invitados
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "session_id", nullable = false)
+    @JoinColumn(name = "session_id")
     private UserSession session;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "status", nullable = false, length = 20)
+    @Column(name = "status", nullable = false)
     @Builder.Default
     private CartStatus status = CartStatus.OPEN;
 
-    @Column(name = "created_at", nullable = false)
+    @Column(name = "created_at", nullable = false, updatable = false)
     @Builder.Default
     private LocalDateTime createdAt = LocalDateTime.now();
 
@@ -72,26 +112,36 @@ public class Cart {
     @Builder.Default
     private LocalDateTime updatedAt = LocalDateTime.now();
 
-    // Colección para relación 1:N
-    @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "cart", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference("cart-items")
     @Builder.Default
     private List<CartItem> items = new ArrayList<>();
 
-    // Método helper para calcular total del carrito
+    // Métodos helper de consulta (sin efectos secundarios)
+
+    /**
+     * Verifica si es carrito de invitado
+     */
+    public boolean isGuestCart() {
+        return user == null;
+    }
+
+    /**
+     * Verifica si el carrito está activo
+     */
+    public boolean isOpen() {
+        return status == CartStatus.OPEN;
+    }
+
+    /**
+     * Calcula el total del carrito sumando todos los items
+     * Delegado a CalculationUtils para centralizar lógica de cálculo
+     */
     public BigDecimal calculateTotal() {
-        if (items == null || items.isEmpty()) {
-            return BigDecimal.ZERO;
-        }
         List<BigDecimal> subtotals = items.stream()
                 .map(CartItem::calculateSubtotal)
                 .collect(Collectors.toList());
         return CalculationUtils.calculateCartTotal(subtotals);
-    }
-
-    // Método helper para verificar si el carrito está abierto
-    public boolean isOpen() {
-        return status == CartStatus.OPEN;
     }
 
     // equals y hashCode basados en ID
@@ -123,9 +173,5 @@ public class Cart {
                 ", itemsCount=" + (items != null ? items.size() : 0) +
                 ", total=" + calculateTotal() +
                 '}';
-    }
-
-    public boolean isGuestCart() {
-        return user == null;
     }
 }

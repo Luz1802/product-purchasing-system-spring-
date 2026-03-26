@@ -1,6 +1,5 @@
 package co.edu.cesde.pps.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import co.edu.cesde.pps.util.ValidationUtils;
 import jakarta.persistence.*;
 import lombok.*;
@@ -23,15 +22,20 @@ import java.util.Objects;
  * - isActive: Indica si el producto está activo (visible en catálogo)
  * - createdAt: Fecha de creación del producto
  *
+ * Tabla BD: products
+ *
  * Consideraciones de diseño:
  * - price usa BigDecimal para evitar errores de redondeo en cálculos monetarios
  * - isActive permite ocultar productos sin borrarlos de la base de datos
  * - sku único facilita integración con sistemas de inventario externos
  *
- * Relaciones:
+ * Relaciones (futuro - etapa09):
  * - N:1 con Category (muchos productos pertenecen a una categoría)
  * - 1:N con CartItem (un producto puede estar en múltiples carritos)
  * - 1:N con OrderItem (un producto puede estar en múltiples órdenes)
+ *
+ * Refactorizado con Lombok en Etapa 07.
+ * Anotaciones JPA básicas agregadas en Etapa 08.
  */
 @Entity
 @Table(name = "products")
@@ -47,9 +51,8 @@ public class Product {
     @Column(name = "product_id")
     private Long productId;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", nullable = false)
-    @JsonBackReference("category-products")
     private Category category;
 
     @Column(name = "sku", nullable = false, unique = true, length = 50)
@@ -71,7 +74,7 @@ public class Product {
     @Builder.Default
     private Boolean isActive = true;
 
-    @Column(name = "created_at", nullable = false)
+    @Column(name = "created_at", nullable = false, updatable = false)
     @Builder.Default
     private LocalDateTime createdAt = LocalDateTime.now();
 
