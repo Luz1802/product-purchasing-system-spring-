@@ -1,20 +1,22 @@
 spring:
   application:
     name: product-purchase-service
+
   datasource:
-    url: jdbc:mysql://${DB_HOST}:${DB_PORT}/${DB_NAME}}?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
-    username: ${DB_USERNAME:root}
-    password: ${DB_PASSWORD:Luz1816}
-    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/pps_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    username: root
+    password: "*SaLuz1816*"
+
   jpa:
     hibernate:
-      ddl-auto: ${DB_DDL_AUTO}
+      ddl-auto: update
     open-in-view: false
-    show-sql: ${DB_SHOW_SQL}
+    show-sql: true
     properties:
       hibernate:
         format_sql: true
         use_sql_comments: true
+
   sql:
     init:
       mode: never

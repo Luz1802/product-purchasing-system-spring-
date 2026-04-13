@@ -40,6 +40,9 @@ build/
 !.env.example
 *.log
 
+### Legacy JPA manual configuration ###
+src/main/resources/META-INF/persistence.xml
+
 ### Security Documentation (contains sensitive examples) ###
 SECURITY.md
 
