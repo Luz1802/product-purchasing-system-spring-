@@ -75,6 +75,7 @@ public class ProductService {
         // Crear producto
         Product product = productMapper.toEntity(productDTO);
         product.setCategory(category);
+        product.setImage(normalizeImage(productDTO.getImage()));
         product.setCreatedAt(LocalDateTime.now());
         category.getProducts().add(product);
 
@@ -110,6 +111,7 @@ public class ProductService {
         product.setSku(productDTO.getSku());
         product.setName(productDTO.getName());
         product.setDescription(productDTO.getDescription());
+        product.setImage(normalizeImage(productDTO.getImage()));
         product.setPrice(productDTO.getPrice());
         product.setStockQty(productDTO.getStockQty());
         product.setIsActive(productDTO.getIsActive());
@@ -309,5 +311,15 @@ public class ProductService {
     public Product findProductEntityOrThrow(Long productId) {
         return productRepository.findById(productId)
                 .orElseThrow(() -> new EntityNotFoundException("Product", productId));
+    }
+
+    private String normalizeImage(String image) {
+        if (image == null || image.isBlank()) {
+            return null;
+        }
+
+        String normalizedImage = image.trim();
+        ValidationUtils.validateMaxLength(normalizedImage, 1000, "image");
+        return normalizedImage;
     }
 }

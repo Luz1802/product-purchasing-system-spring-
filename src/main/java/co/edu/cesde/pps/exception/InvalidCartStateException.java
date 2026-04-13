@@ -29,9 +29,9 @@ public class InvalidCartStateException extends BusinessException {
      * @param operation Descripción de la operación que se intentó realizar
      */
     public InvalidCartStateException(Long cartId, CartStatus currentState,
-                                    CartStatus requiredState, String operation) {
+                                     CartStatus requiredState, String operation) {
         super(String.format("Cannot perform '%s' on cart %d. Current state: %s, Required state: %s",
-            operation, cartId, currentState, requiredState));
+                operation, cartId, currentState, requiredState));
         this.cartId = cartId;
         this.currentState = currentState;
         this.requiredState = requiredState;

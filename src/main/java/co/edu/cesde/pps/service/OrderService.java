@@ -20,7 +20,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Random;
-import java.util.stream.Collectors;
 
 /**
  * Servicio para gestión de órdenes.
@@ -224,6 +223,21 @@ public class OrderService {
      */
     public OrderDTO findById(Long orderId) {
         Order order = findOrderEntityOrThrow(orderId);
+        return orderMapper.toDTO(order);
+    }
+
+    /**
+     * Busca una orden por ID validando que pertenezca al usuario indicado.
+     *
+     * @param userId ID del usuario propietario
+     * @param orderId ID de la orden
+     * @return OrderDTO de la orden encontrada
+     */
+    public OrderDTO findByIdForUser(Long userId, Long orderId) {
+        Order order = findOrderEntityOrThrow(orderId);
+        if (order.getUser() == null || !order.getUser().getUserId().equals(userId)) {
+            throw new ValidationException("Order does not belong to user");
+        }
         return orderMapper.toDTO(order);
     }
 

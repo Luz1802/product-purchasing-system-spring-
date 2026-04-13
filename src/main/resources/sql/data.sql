@@ -92,37 +92,37 @@ ON DUPLICATE KEY UPDATE name=VALUES(name);
 -- Datos: products (Ejemplos)
 -- ============================================
 -- Productos de Electronics > Computers
-INSERT INTO products (product_id, category_id, sku, name, description, price, stock_qty, is_active) VALUES
-(1, 11, 'COMP-LAP-001', 'Dell XPS 13 Laptop', 'High-performance ultrabook with Intel i7', 1299.99, 15, TRUE),
-(2, 11, 'COMP-LAP-002', 'MacBook Air M2', 'Apple MacBook Air with M2 chip', 1199.99, 10, TRUE),
-(3, 11, 'COMP-DES-001', 'Gaming Desktop PC', 'High-end gaming desktop with RTX 4080', 2499.99, 5, TRUE)
-ON DUPLICATE KEY UPDATE price=VALUES(price), stock_qty=VALUES(stock_qty);
+INSERT INTO products (product_id, category_id, sku, name, description, image, price, stock_qty, is_active) VALUES
+1, 11, 'COMP-LAP-001', 'Dell XPS 13 Laptop', 'High-performance ultrabook with Intel i7', 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=1200&q=80', 1299.99, 15, TRUE),
+(2, 11, 'COMP-LAP-002', 'MacBook Air M2', 'Apple MacBook Air with M2 chip', 'https://images.unsplash.com/photo-1517336714739-489689fd1ca8?auto=format&fit=crop&w=1200&q=80', 1199.99, 10, TRUE),
+(3, 11, 'COMP-DES-001', 'Gaming Desktop PC', 'High-end gaming desktop with RTX 4080', 'https://images.unsplash.com/photo-1593640408182-31c70c8268f5?auto=format&fit=crop&w=1200&q=80', 2499.99, 5, TRUE)
+ON DUPLICATE KEY UPDATE image=VALUES(image), price=VALUES(price), stock_qty=VALUES(stock_qty);
 
 -- Productos de Electronics > Smartphones
-INSERT INTO products (product_id, category_id, sku, name, description, price, stock_qty, is_active) VALUES
-(4, 12, 'PHONE-IP-001', 'iPhone 15 Pro', 'Latest Apple iPhone with A17 chip', 999.99, 20, TRUE),
-(5, 12, 'PHONE-SAM-001', 'Samsung Galaxy S24', 'Flagship Samsung smartphone', 899.99, 25, TRUE),
-(6, 12, 'PHONE-PIX-001', 'Google Pixel 8', 'Google Pixel with advanced AI', 699.99, 15, TRUE)
-ON DUPLICATE KEY UPDATE price=VALUES(price), stock_qty=VALUES(stock_qty);
+INSERT INTO products (product_id, category_id, sku, name, description, image, price, stock_qty, is_active) VALUES
+(4, 12, 'PHONE-IP-001', 'iPhone 15 Pro', 'Latest Apple iPhone with A17 chip', 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=1200&q=80', 999.99, 20, TRUE),
+(5, 12, 'PHONE-SAM-001', 'Samsung Galaxy S24', 'Flagship Samsung smartphone', 'https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=1200&q=80', 899.99, 25, TRUE),
+(6, 12, 'PHONE-PIX-001', 'Google Pixel 8', 'Google Pixel with advanced AI', 'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?auto=format&fit=crop&w=1200&q=80', 699.99, 15, TRUE)
+ON DUPLICATE KEY UPDATE image=VALUES(image), price=VALUES(price), stock_qty=VALUES(stock_qty);
 
 -- Productos de Electronics > Audio
-INSERT INTO products (product_id, category_id, sku, name, description, price, stock_qty, is_active) VALUES
-(7, 13, 'AUD-HEAD-001', 'Sony WH-1000XM5', 'Noise-canceling wireless headphones', 399.99, 30, TRUE),
-(8, 13, 'AUD-SPEAK-001', 'JBL Flip 6', 'Portable Bluetooth speaker', 129.99, 50, TRUE)
-ON DUPLICATE KEY UPDATE price=VALUES(price), stock_qty=VALUES(stock_qty);
+INSERT INTO products (product_id, category_id, sku, name, description, image, price, stock_qty, is_active) VALUES
+(7, 13, 'AUD-HEAD-001', 'Sony WH-1000XM5', 'Noise-canceling wireless headphones', 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=1200&q=80', 399.99, 30, TRUE),
+(8, 13, 'AUD-SPEAK-001', 'JBL Flip 6', 'Portable Bluetooth speaker', 'https://images.unsplash.com/photo-1545454675-3531b543be5d?auto=format&fit=crop&w=1200&q=80', 129.99, 50, TRUE)
+ON DUPLICATE KEY UPDATE image=VALUES(image), price=VALUES(price), stock_qty=VALUES(stock_qty);
 
 -- Productos de Clothing > Men
-INSERT INTO products (product_id, category_id, sku, name, description, price, stock_qty, is_active) VALUES
-(9, 21, 'CLOTH-MEN-001', 'Classic Denim Jeans', 'Comfortable fit denim jeans', 59.99, 100, TRUE),
-(10, 21, 'CLOTH-MEN-002', 'Cotton T-Shirt', 'Basic cotton t-shirt', 19.99, 200, TRUE)
-ON DUPLICATE KEY UPDATE price=VALUES(price), stock_qty=VALUES(stock_qty);
+INSERT INTO products (product_id, category_id, sku, name, description, image, price, stock_qty, is_active) VALUES
+(9, 21, 'CLOTH-MEN-001', 'Classic Denim Jeans', 'Comfortable fit denim jeans', 'https://images.unsplash.com/photo-1542272604-787c3835535d?auto=format&fit=crop&w=1200&q=80', 59.99, 100, TRUE),
+(10, 21, 'CLOTH-MEN-002', 'Cotton T-Shirt', 'Basic cotton t-shirt', 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=1200&q=80', 19.99, 200, TRUE)
+ON DUPLICATE KEY UPDATE image=VALUES(image), price=VALUES(price), stock_qty=VALUES(stock_qty);
 
 -- Productos de Books > Technical
-INSERT INTO products (product_id, category_id, sku, name, description, price, stock_qty, is_active) VALUES
-(11, 33, 'BOOK-TECH-001', 'Clean Code', 'Robert C. Martin - Programming best practices', 44.99, 50, TRUE),
-(12, 33, 'BOOK-TECH-002', 'Design Patterns', 'Gang of Four - Essential design patterns', 54.99, 40, TRUE),
-(13, 33, 'BOOK-TECH-003', 'Java Persistence with Hibernate', 'JPA and Hibernate guide', 49.99, 30, TRUE)
-ON DUPLICATE KEY UPDATE price=VALUES(price), stock_qty=VALUES(stock_qty);
+INSERT INTO products (product_id, category_id, sku, name, description, image, price, stock_qty, is_active) VALUES
+(11, 33, 'BOOK-TECH-001', 'Clean Code', 'Robert C. Martin - Programming best practices', 'https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=1200&q=80', 44.99, 50, TRUE),
+(12, 33, 'BOOK-TECH-002', 'Design Patterns', 'Gang of Four - Essential design patterns', 'https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?auto=format&fit=crop&w=1200&q=80', 54.99, 40, TRUE),
+(13, 33, 'BOOK-TECH-003', 'Java Persistence with Hibernate', 'JPA and Hibernate guide', 'https://images.unsplash.com/photo-1495446815901-a7297e633e8d?auto=format&fit=crop&w=1200&q=80', 49.99, 30, TRUE)
+ON DUPLICATE KEY UPDATE image=VALUES(image), price=VALUES(price), stock_qty=VALUES(stock_qty);
 
 -- ============================================
 -- Datos: users (Ejemplos para testing)

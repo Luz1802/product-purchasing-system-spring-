@@ -89,6 +89,7 @@ public class CartMapper {
             dto.setProductId(item.getProduct().getProductId());
             dto.setProductName(item.getProduct().getName());
             dto.setProductSku(item.getProduct().getSku());
+            dto.setProductImageUrl(normalizeImage(item.getProduct().getImage()));
             dto.setProductAvailable(item.getProduct().isAvailable());
             dto.setProductStock(item.getProduct().getStockQty());
         }
@@ -107,6 +108,14 @@ public class CartMapper {
         }
 
         return dto;
+    }
+
+    private String normalizeImage(String image) {
+        if (image == null || image.isBlank()) {
+            return null;
+        }
+
+        return image.trim();
     }
 
     /**

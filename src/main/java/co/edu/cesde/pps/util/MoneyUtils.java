@@ -156,7 +156,7 @@ public final class MoneyUtils {
         BigDecimal normalizedAmount = normalize(amount);
         BigDecimal normalizedPercentage = percentage != null ? percentage : BigDecimal.ZERO;
         return normalizedAmount.multiply(normalizedPercentage)
-            .divide(BigDecimal.valueOf(100), DEFAULT_SCALE, DEFAULT_ROUNDING_MODE);
+                .divide(BigDecimal.valueOf(100), DEFAULT_SCALE, DEFAULT_ROUNDING_MODE);
     }
 
     /**

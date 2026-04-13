@@ -29,7 +29,7 @@ public class CartMergeException extends BusinessException {
      */
     public CartMergeException(Long guestCartId, Long userCartId, String message) {
         super(String.format("Cart merge failed between guest cart %d and user cart %d: %s",
-            guestCartId, userCartId, message));
+                guestCartId, userCartId, message));
         this.guestCartId = guestCartId;
         this.userCartId = userCartId;
     }

@@ -17,6 +17,7 @@ import java.util.Objects;
  * - sku: Stock Keeping Unit (UNIQUE) - código único de inventario
  * - name: Nombre del producto
  * - description: Descripción detallada del producto
+ * - image: URL pública de la imagen principal del producto
  * - price: Precio actual del producto (BigDecimal para precisión monetaria)
  * - stockQty: Cantidad en stock/inventario
  * - isActive: Indica si el producto está activo (visible en catálogo)
@@ -63,6 +64,9 @@ public class Product {
 
     @Column(name = "description", columnDefinition = "TEXT")
     private String description;
+
+    @Column(name = "image", length = 1000)
+    private String image;
 
     @Column(name = "price", nullable = false, precision = 10, scale = 2)
     private BigDecimal price;
@@ -119,6 +123,7 @@ public class Product {
                 ", categoryId=" + (category != null ? category.getCategoryId() : null) +
                 ", sku='" + sku + '\'' +
                 ", name='" + name + '\'' +
+                ", image='" + image + '\'' +
                 ", price=" + price +
                 ", stockQty=" + stockQty +
                 ", isActive=" + isActive +

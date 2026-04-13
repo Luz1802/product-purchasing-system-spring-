@@ -162,6 +162,10 @@ public class AppConfig {
      * @return environment (development, staging, production)
      */
     public static String getEnvironment() {
+        String environment = System.getProperty("APP_ENVIRONMENT");
+        if (environment != null && !environment.isBlank()) {
+            return environment;
+        }
         return System.getenv().getOrDefault("APP_ENVIRONMENT", "development");
     }
 

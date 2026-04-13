@@ -26,9 +26,9 @@ public class InsufficientStockException extends BusinessException {
      * @param availableStock Stock disponible actual
      */
     public InsufficientStockException(Long productId, String productSku,
-                                     Integer requestedQuantity, Integer availableStock) {
+                                      Integer requestedQuantity, Integer availableStock) {
         super(String.format("Insufficient stock for product %s (ID: %d). Requested: %d, Available: %d",
-            productSku, productId, requestedQuantity, availableStock));
+                productSku, productId, requestedQuantity, availableStock));
         this.productId = productId;
         this.productSku = productSku;
         this.requestedQuantity = requestedQuantity;

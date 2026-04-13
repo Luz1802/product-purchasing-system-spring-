@@ -62,8 +62,8 @@ public final class CalculationUtils {
         }
 
         return itemSubtotals.stream()
-            .map(MoneyUtils::normalize)
-            .reduce(BigDecimal.ZERO, MoneyUtils::add);
+                .map(MoneyUtils::normalize)
+                .reduce(BigDecimal.ZERO, MoneyUtils::add);
     }
 
     /**
@@ -80,8 +80,8 @@ public final class CalculationUtils {
         BigDecimal normalizedShipping = MoneyUtils.normalize(shippingCost);
 
         return MoneyUtils.add(
-            MoneyUtils.add(normalizedSubtotal, normalizedTax),
-            normalizedShipping
+                MoneyUtils.add(normalizedSubtotal, normalizedTax),
+                normalizedShipping
         );
     }
 
@@ -97,8 +97,8 @@ public final class CalculationUtils {
         }
 
         return itemLineTotals.stream()
-            .map(MoneyUtils::normalize)
-            .reduce(BigDecimal.ZERO, MoneyUtils::add);
+                .map(MoneyUtils::normalize)
+                .reduce(BigDecimal.ZERO, MoneyUtils::add);
     }
 
     /**
@@ -174,8 +174,8 @@ public final class CalculationUtils {
      */
     public static BigDecimal calculateWeightedAveragePrice(List<BigDecimal> prices, List<Integer> quantities) {
         if (prices == null || quantities == null ||
-            prices.isEmpty() || quantities.isEmpty() ||
-            prices.size() != quantities.size()) {
+                prices.isEmpty() || quantities.isEmpty() ||
+                prices.size() != quantities.size()) {
             return BigDecimal.ZERO;
         }
 

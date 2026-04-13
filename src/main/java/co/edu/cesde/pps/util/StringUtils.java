@@ -161,7 +161,7 @@ public final class StringUtils {
         }
         // Remover caracteres de control y caracteres potencialmente peligrosos
         return str.replaceAll("[\\p{Cntrl}&&[^\r\n\t]]", "")
-                  .replaceAll("[<>\"']", "");
+                .replaceAll("[<>\"']", "");
     }
 
     /**

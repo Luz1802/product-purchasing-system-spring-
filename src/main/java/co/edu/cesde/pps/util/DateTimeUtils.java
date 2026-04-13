@@ -19,19 +19,19 @@ public final class DateTimeUtils {
      * Formato por defecto para fechas: dd/MM/yyyy HH:mm:ss
      */
     public static final DateTimeFormatter DEFAULT_FORMATTER =
-        DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+            DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
 
     /**
      * Formato corto para fechas: dd/MM/yyyy
      */
     public static final DateTimeFormatter DATE_ONLY_FORMATTER =
-        DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
     /**
      * Formato ISO 8601: yyyy-MM-dd'T'HH:mm:ss
      */
     public static final DateTimeFormatter ISO_FORMATTER =
-        DateTimeFormatter.ISO_LOCAL_DATE_TIME;
+            DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 
     // Constructor privado para prevenir instanciación
     private DateTimeUtils() {

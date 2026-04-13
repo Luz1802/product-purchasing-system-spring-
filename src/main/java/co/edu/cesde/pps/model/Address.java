@@ -10,7 +10,7 @@ import java.util.Objects;
 /**
  * Entidad Address - Representa direcciones de envío y/o facturación de un usuario.
  *
- * Un usuario puede tener múltiples direcciones (ej.: casa, oficina).
+ * Un usuario puede tener múltiples direcciones (ej: casa, oficina).
  * Cada dirección tiene un tipo: SHIPPING (envío) o BILLING (facturación).
  *
  * Campos:

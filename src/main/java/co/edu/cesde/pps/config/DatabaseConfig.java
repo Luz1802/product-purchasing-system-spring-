@@ -1,6 +1,12 @@
 package co.edu.cesde.pps.config;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+/**
+ * @deprecated Configuración histórica del bootstrap manual de JPA.
+ *     Se conserva solo como referencia y no debe usarse en el flujo activo de Spring Boot.
+ */
+@Deprecated(since = "2026-04")
 public class DatabaseConfig {
     private static final Logger log = LoggerFactory.getLogger(DatabaseConfig.class);
     private static final String DEFAULT_DB_HOST = "localhost";

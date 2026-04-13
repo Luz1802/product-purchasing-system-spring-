@@ -132,6 +132,59 @@ public class CartService {
     }
 
     /**
+     * Busca carrito OPEN asociado a una sesión (puede no existir).
+     *
+     * @param sessionId ID de la sesión
+     * @return CartDTO o null si no existe
+     */
+    public CartDTO findOpenCartBySession(Long sessionId) {
+        if (sessionId == null) {
+            return null;
+        }
+
+        Cart cart = cartRepository.findBySession_SessionIdAndStatus(sessionId, CartStatus.OPEN)
+                .orElse(null);
+
+        return cart != null ? cartMapper.toDTO(cart) : null;
+    }
+
+    /**
+     * Busca o crea carrito OPEN para usuario.
+     *
+     * @param userId ID del usuario
+     * @return CartDTO activo del usuario
+     */
+    @Transactional
+    public CartDTO findOrCreateOpenCartForUser(Long userId) {
+        return cartMapper.toDTO(findOrCreateOpenCartEntityForUser(userId));
+    }
+
+    /**
+     * Busca o crea carrito OPEN para una sesión guest.
+     *
+     * @param sessionId ID de la sesión guest
+     * @return CartDTO activo de la sesión
+     */
+    @Transactional
+    public CartDTO findOrCreateOpenCartForGuestSession(Long sessionId) {
+        ValidationUtils.validateNotNull(sessionId, "sessionId");
+
+        Cart cart = cartRepository.findBySession_SessionIdAndStatus(sessionId, CartStatus.OPEN)
+                .orElseGet(() -> {
+                    UserSession session = resolveSession(sessionId);
+                    return cartRepository.save(Cart.builder()
+                            .user(null)
+                            .session(session)
+                            .status(CartStatus.OPEN)
+                            .createdAt(LocalDateTime.now())
+                            .updatedAt(LocalDateTime.now())
+                            .build());
+                });
+
+        return cartMapper.toDTO(cart);
+    }
+
+    /**
      * Agrega un item al carrito (gestión bidireccional).
      *
      * @param cartId ID del carrito
@@ -348,7 +401,7 @@ public class CartService {
     public CartDTO mergeGuestCartToUserCart(Long guestCartId, Long userId) {
         // 1. Obtener ambos carritos
         Cart guestCart = findCartEntityOrThrow(guestCartId);
-        Cart userCart = findOrCreateOpenCartForUser(userId);
+        Cart userCart = findOrCreateOpenCartEntityForUser(userId);
 
         // 2. Validar estados
         if (guestCart.getStatus() != CartStatus.OPEN) {
@@ -469,7 +522,7 @@ public class CartService {
     /**
      * Busca carrito OPEN del usuario o crea uno nuevo si no existe.
      */
-    private Cart findOrCreateOpenCartForUser(Long userId) {
+    private Cart findOrCreateOpenCartEntityForUser(Long userId) {
         User user = userService.findUserEntityOrThrow(userId);
 
         return cartRepository.findByUser_UserIdAndStatus(userId, CartStatus.OPEN)

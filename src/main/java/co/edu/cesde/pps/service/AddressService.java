@@ -210,6 +210,38 @@ public class AddressService {
     }
 
     /**
+     * Busca una dirección por ID validando que pertenezca al usuario indicado.
+     *
+     * @param userId ID del usuario propietario
+     * @param addressId ID de la dirección
+     * @return AddressDTO
+     */
+    public AddressDTO findUserAddressById(Long userId, Long addressId) {
+        Address address = findAddressEntityOrThrow(addressId);
+        if (!address.getUser().getUserId().equals(userId)) {
+            throw new ValidationException("Address does not belong to user");
+        }
+        return addressMapper.toDTO(address);
+    }
+
+    /**
+     * Actualiza una dirección validando propiedad del usuario.
+     *
+     * @param userId ID del usuario propietario
+     * @param addressId ID de la dirección
+     * @param addressDTO nuevos datos
+     * @return AddressDTO actualizado
+     */
+    @Transactional
+    public AddressDTO updateUserAddress(Long userId, Long addressId, AddressDTO addressDTO) {
+        Address address = findAddressEntityOrThrow(addressId);
+        if (!address.getUser().getUserId().equals(userId)) {
+            throw new ValidationException("Address does not belong to user");
+        }
+        return updateAddress(addressId, addressDTO);
+    }
+
+    /**
      * Busca entity Address por ID o lanza excepción.
      * Método interno para uso de otros servicios.
      *

@@ -29,7 +29,7 @@ public class ValidationException extends BusinessException {
      */
     public ValidationException(String fieldName, Object invalidValue, String message) {
         super(String.format("Validation failed for field '%s' with value '%s': %s",
-            fieldName, invalidValue, message));
+                fieldName, invalidValue, message));
         this.fieldName = fieldName;
         this.invalidValue = invalidValue;
     }

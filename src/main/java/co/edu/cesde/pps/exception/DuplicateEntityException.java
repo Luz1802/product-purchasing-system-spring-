@@ -28,7 +28,7 @@ public class DuplicateEntityException extends BusinessException {
      */
     public DuplicateEntityException(String entityType, String fieldName, Object duplicateValue) {
         super(String.format("%s already exists with %s: %s",
-            entityType, fieldName, duplicateValue));
+                entityType, fieldName, duplicateValue));
         this.entityType = entityType;
         this.fieldName = fieldName;
         this.duplicateValue = duplicateValue;
